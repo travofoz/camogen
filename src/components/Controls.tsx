@@ -5,6 +5,8 @@ import { useState } from 'react';
 interface ControlsProps {
   traceMode: boolean;
   onToggleTraceMode: () => void;
+  arMode: boolean;
+  onToggleArMode: () => void;
   onRandomize: () => void;
   onExport: () => void;
   scale: number;
@@ -16,6 +18,8 @@ interface ControlsProps {
 export default function Controls({ 
   traceMode, 
   onToggleTraceMode, 
+  arMode,
+  onToggleArMode,
   onRandomize, 
   onExport,
   scale,
@@ -75,13 +79,22 @@ export default function Controls({
             </div>
           </div>
 
-          <button 
-            onClick={onToggleTraceMode}
-            className={`w-full py-3 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 ${traceMode ? 'bg-[#5e7d43] text-white shadow-[#5e7d43]/20' : 'bg-white/10 text-white hover:bg-white/20'}`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12A10 10 0 1 0 22 12A10 10 0 1 0 2 12"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-            {traceMode ? 'Trace Mode: ACTIVE' : 'Trace Mode: OFF'}
-          </button>
+          <div className="flex gap-3">
+            <button 
+              onClick={onToggleTraceMode}
+              className={`flex-1 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 text-sm ${traceMode ? 'bg-[#5e7d43] text-white shadow-[#5e7d43]/20' : 'bg-white/10 text-white hover:bg-white/20'}`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12A10 10 0 1 0 22 12A10 10 0 1 0 2 12"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+              Trace
+            </button>
+            <button 
+              onClick={onToggleArMode}
+              className={`flex-1 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 text-sm ${arMode ? 'bg-blue-600 text-white shadow-blue-600/20' : 'bg-white/10 text-white hover:bg-white/20'}`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              AR Warp
+            </button>
+          </div>
 
           <div className="flex gap-3">
             <button 

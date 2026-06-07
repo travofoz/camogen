@@ -9,14 +9,14 @@ import { exportToSvg } from '@/utils/exportSvg';
 
 export default function Home() {
   const [polygons, setPolygons] = useState<Polygon[]>([]);
-  // Default to trace mode ON so the camera feed is visible immediately
   const [traceMode, setTraceMode] = useState(true); 
+  const [arMode, setArMode] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [scale, setScale] = useState(65);
   const [jitter, setJitter] = useState(0.85);
 
   const regenerate = useCallback(() => {
-    // Generate a pattern large enough to cover most screens, but allow panning
+    // In AR mode, generating a perfect square makes warping more predictable
     const w = Math.max(typeof window !== 'undefined' ? window.innerWidth : 1200, 1200);
     const h = Math.max(typeof window !== 'undefined' ? window.innerHeight : 1200, 1200);
     setDimensions({ width: w, height: h });
@@ -41,10 +41,13 @@ export default function Home() {
         width={dimensions.width} 
         height={dimensions.height} 
         traceMode={traceMode} 
+        arMode={arMode}
       />
       <Controls 
         traceMode={traceMode} 
         onToggleTraceMode={() => setTraceMode(!traceMode)}
+        arMode={arMode}
+        onToggleArMode={() => setArMode(!arMode)}
         onRandomize={regenerate}
         onExport={handleExport}
         scale={scale}
