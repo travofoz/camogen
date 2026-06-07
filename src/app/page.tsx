@@ -14,11 +14,12 @@ export default function Home() {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [scale, setScale] = useState(65);
   const [jitter, setJitter] = useState(0.85);
+  const [patternOffset, setPatternOffset] = useState({ x: 0, y: 0 });
 
   const regenerate = useCallback(() => {
-    // In AR mode, generating a perfect square makes warping more predictable
-    const w = Math.max(typeof window !== 'undefined' ? window.innerWidth : 1200, 1200);
-    const h = Math.max(typeof window !== 'undefined' ? window.innerHeight : 1200, 1200);
+    // Generate an enormously large pattern so you can pan across many surfaces
+    const w = 4000;
+    const h = 4000;
     setDimensions({ width: w, height: h });
     setPolygons(generateSplinterPattern(w, h, scale, jitter));
   }, [scale, jitter]);
@@ -42,6 +43,7 @@ export default function Home() {
         height={dimensions.height} 
         traceMode={traceMode} 
         arMode={arMode}
+        patternOffset={patternOffset}
       />
       <Controls 
         traceMode={traceMode} 
@@ -54,6 +56,8 @@ export default function Home() {
         setScale={setScale}
         jitter={jitter}
         setJitter={setJitter}
+        patternOffset={patternOffset}
+        setPatternOffset={setPatternOffset}
       />
     </main>
   );

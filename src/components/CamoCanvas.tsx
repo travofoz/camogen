@@ -10,9 +10,10 @@ interface CamoCanvasProps {
   height: number;
   traceMode: boolean;
   arMode: boolean;
+  patternOffset: { x: number, y: number };
 }
 
-export default function CamoCanvas({ polygons, width, height, traceMode, arMode }: CamoCanvasProps) {
+export default function CamoCanvas({ polygons, width, height, traceMode, arMode, patternOffset }: CamoCanvasProps) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   
@@ -138,7 +139,7 @@ export default function CamoCanvas({ polygons, width, height, traceMode, arMode 
         className={arMode ? 'will-change-transform' : 'will-change-transform cursor-grab active:cursor-grabbing'}
       >
         <svg 
-          viewBox={`0 0 ${width} ${height}`} 
+          viewBox={`${patternOffset.x} ${patternOffset.y} ${width} ${height}`} 
           width={width} 
           height={height}
           className="w-full h-full"

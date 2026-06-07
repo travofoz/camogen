@@ -13,6 +13,8 @@ interface ControlsProps {
   setScale: (val: number) => void;
   jitter: number;
   setJitter: (val: number) => void;
+  patternOffset: { x: number, y: number };
+  setPatternOffset: (val: { x: number, y: number }) => void;
 }
 
 export default function Controls({ 
@@ -25,9 +27,19 @@ export default function Controls({
   scale,
   setScale,
   jitter,
-  setJitter
+  setJitter,
+  patternOffset,
+  setPatternOffset
 }: ControlsProps) {
   const [isOpen, setIsOpen] = useState(true);
+
+  // Shift by roughly the width of a typical face (e.g. 500px)
+  const shiftPattern = (dx: number, dy: number) => {
+    setPatternOffset({
+      x: patternOffset.x + dx * 500,
+      y: patternOffset.y + dy * 500
+    });
+  };
 
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md">
@@ -95,6 +107,22 @@ export default function Controls({
               AR Warp
             </button>
           </div>
+
+          {arMode && (
+            <div className="bg-blue-900/40 p-4 rounded-xl border border-blue-500/30 flex flex-col items-center gap-2">
+              <span className="text-xs font-semibold text-blue-200 uppercase tracking-wider mb-1">Shift Pattern to Adjacent Face</span>
+              <div className="grid grid-cols-3 gap-2 w-full max-w-[200px]">
+                <div />
+                <button onClick={() => shiftPattern(0, -1)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬆️</button>
+                <div />
+                <button onClick={() => shiftPattern(-1, 0)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬅️</button>
+                <div className="flex items-center justify-center text-xs text-blue-200/50">Face</div>
+                <button onClick={() => shiftPattern(1, 0)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">➡️</button>
+                <div />
+                <button onClick={() => shiftPattern(0, 1)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬇️</button>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3">
             <button 
