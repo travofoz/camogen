@@ -11,6 +11,7 @@ export default function Home() {
   const [polygons, setPolygons] = useState<Polygon[]>([]);
   const [traceMode, setTraceMode] = useState(true); 
   const [arMode, setArMode] = useState(false);
+  const [autoSnap, setAutoSnap] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [scale, setScale] = useState(65);
   const [jitter, setJitter] = useState(0.85);
@@ -44,12 +45,15 @@ export default function Home() {
         traceMode={traceMode} 
         arMode={arMode}
         patternOffset={patternOffset}
+        autoSnap={autoSnap}
       />
       <Controls 
         traceMode={traceMode} 
         onToggleTraceMode={() => setTraceMode(!traceMode)}
         arMode={arMode}
         onToggleArMode={() => setArMode(!arMode)}
+        autoSnap={autoSnap}
+        onToggleAutoSnap={() => setAutoSnap(!autoSnap)}
         onRandomize={regenerate}
         onExport={handleExport}
         scale={scale}

@@ -7,6 +7,8 @@ interface ControlsProps {
   onToggleTraceMode: () => void;
   arMode: boolean;
   onToggleArMode: () => void;
+  autoSnap: boolean;
+  onToggleAutoSnap: () => void;
   onRandomize: () => void;
   onExport: () => void;
   scale: number;
@@ -22,6 +24,8 @@ export default function Controls({
   onToggleTraceMode, 
   arMode,
   onToggleArMode,
+  autoSnap,
+  onToggleAutoSnap,
   onRandomize, 
   onExport,
   scale,
@@ -109,17 +113,29 @@ export default function Controls({
           </div>
 
           {arMode && (
-            <div className="bg-blue-900/40 p-4 rounded-xl border border-blue-500/30 flex flex-col items-center gap-2">
-              <span className="text-xs font-semibold text-blue-200 uppercase tracking-wider mb-1">Shift Pattern to Adjacent Face</span>
-              <div className="grid grid-cols-3 gap-2 w-full max-w-[200px]">
-                <div />
-                <button onClick={() => shiftPattern(0, -1)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬆️</button>
-                <div />
-                <button onClick={() => shiftPattern(-1, 0)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬅️</button>
-                <div className="flex items-center justify-center text-xs text-blue-200/50">Face</div>
-                <button onClick={() => shiftPattern(1, 0)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">➡️</button>
-                <div />
-                <button onClick={() => shiftPattern(0, 1)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬇️</button>
+            <div className="bg-blue-900/40 p-4 rounded-xl border border-blue-500/30 flex flex-col items-center gap-4">
+              <button 
+                onClick={onToggleAutoSnap}
+                className={`w-full py-2.5 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 text-sm ${autoSnap ? 'bg-green-600 text-white shadow-green-600/20' : 'bg-white/10 text-white hover:bg-white/20 border border-white/10'}`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                {autoSnap ? 'OpenCV Auto-Snap: ON' : 'OpenCV Auto-Snap: OFF'}
+              </button>
+
+              <div className="w-full h-px bg-white/10" />
+
+              <div className="flex flex-col items-center gap-2 w-full">
+                <span className="text-xs font-semibold text-blue-200 uppercase tracking-wider mb-1">Shift Pattern to Adjacent Face</span>
+                <div className="grid grid-cols-3 gap-2 w-full max-w-[200px]">
+                  <div />
+                  <button onClick={() => shiftPattern(0, -1)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬆️</button>
+                  <div />
+                  <button onClick={() => shiftPattern(-1, 0)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬅️</button>
+                  <div className="flex items-center justify-center text-xs text-blue-200/50">Face</div>
+                  <button onClick={() => shiftPattern(1, 0)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">➡️</button>
+                  <div />
+                  <button onClick={() => shiftPattern(0, 1)} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex justify-center">⬇️</button>
+                </div>
               </div>
             </div>
           )}

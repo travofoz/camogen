@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Polygon } from '../utils/camoEngine';
 import { getTransform, Point } from '../utils/perspective';
 
+import { useAutoSnap } from '../hooks/useAutoSnap';
+
 interface CamoCanvasProps {
   polygons: Polygon[];
   width: number;
@@ -11,9 +13,10 @@ interface CamoCanvasProps {
   traceMode: boolean;
   arMode: boolean;
   patternOffset: { x: number, y: number };
+  autoSnap: boolean;
 }
 
-export default function CamoCanvas({ polygons, width, height, traceMode, arMode, patternOffset }: CamoCanvasProps) {
+export default function CamoCanvas({ polygons, width, height, traceMode, arMode, patternOffset, autoSnap }: CamoCanvasProps) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   
@@ -29,6 +32,22 @@ export default function CamoCanvas({ polygons, width, height, traceMode, arMode,
     { x: 50, y: 400 }
   ]);
   const [activeCorner, setActiveCorner] = useState<number | null>(null);
+
+  // Integrate OpenCV AutoSnap
+  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
+  
+  useEffect(() => {
+    // Find the video element from CameraOverlay
+    const v = document.querySelector('video');
+    if (v) setVideoEl(v);
+  }, []);
+
+  const { isLoaded: isCvLoaded } = useAutoSnap(videoEl, arMode && autoSnap, (detectedCorners) => {
+    // Only update if user isn't manually dragging a corner right now
+    if (activeCorner === null) {
+      setCorners(detectedCorners);
+    }
+  });
 
   useEffect(() => {
     // Initialize corners nicely when AR mode turns on, if we know window size
@@ -206,6 +225,22 @@ export default function CamoCanvas({ polygons, width, height, traceMode, arMode,
               <div className="w-2 h-2 bg-white rounded-full" />
             </div>
           ))}
+
+          {autoSnap && (
+            <div className="absolute top-24 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full border border-white/20 flex items-center gap-2 backdrop-blur-md shadow-xl text-sm font-semibold pointer-events-none">
+              {isCvLoaded ? (
+                <>
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  Auto-Snapping...
+                </>
+              ) : (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  Loading OpenCV.js (8MB)...
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
