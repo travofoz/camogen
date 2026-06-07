@@ -1,0 +1,207 @@
+
+CTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swedish M90 Splinter Camo Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { color: #5e7d43; margin-bottom: 5px; font-weight: 600; }
+        p { color: #888; margin-top: 0; margin-bottom: 20px; font-size: 0.95rem; }
+        .container {
+            display: flex;
+            gap: 25px;
+            background: #262626;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            max-width: 1100px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            min-width: 280px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        label { font-size: 0.85rem; font-weight: bold; color: #b3b3b3; text-transform: uppercase; letter-spacing: 0.5px; }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #5e7d43;
+            cursor: pointer;
+        }
+        .value-display {
+            color: #5e7d43;
+            font-family: monospace;
+            font-weight: bold;
+            float: right;
+        }
+        .preview-box {
+            flex: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #111;
+            border-radius: 8px;
+            padding: 15px;
+            overflow: auto;
+            border: 1px solid #333;
+        }
+        canvas {
+            border: 2px solid #444;
+            max-width: 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+        }
+        button {
+            background-color: #4a6b36;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #5e7d43; }
+        button:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+    <h1>M90 Splinter Camo Engine</h1>
+    <p>Algorithmic layout generator for 6-sided mechanical stencil alignment</p>
+
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label for="scale">Pattern Scale: <span id="scaleVal" class="value-display">65</span></label>
+                <input type="range" id="scale" min="35" max="150" value="65">
+            </div>
+            <div class="control-group">
+                <label for="width">Canvas Width: <span id="widthVal" class="value-display">650</span></label>
+                <input type="range" id="width" min="300" max="1200" value="650">
+            </div>
+            <div class="control-group">
+                <label for="height">Canvas Height: <span id="heightVal" class="value-display">450</span></label>
+                <input type="range" id="height" min="200" max="800" value="450">
+            </div>
+            <div class="control-group">
+                <label for="jitter">Edge Splintering (Jitter): <span id="jitterVal" class="value-display">0.85</span></label>
+                <input type="range" id="jitter" min="0.1" max="1.4" step="0.05" value="0.85">
+            </div>
+            <button id="generateBtn">Re-seed Randomization</button>
+        </div>
+        
+        <div class="preview-box">
+            <canvas id="camoCanvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('camoCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Genuine Swedish M90 High-Contrast Palette
+        const m90Colors = [
+            '#1b3318', // Deep Forest Green
+            '#3e5c2f', // Light Army Green
+            '#a19c86', // Sandy Gray/Khaki
+            '#111111'  // Tactical Black
+        ];
+
+        function generateSplinterPattern() {
+            const scale = parseInt(document.getElementById('scale').value);
+            const width = parseInt(document.getElementById('width').value);
+            const height = parseInt(document.getElementById('height').value);
+            const jitterFactor = parseFloat(document.getElementById('jitter').value);
+            
+            // Dynamic UI Feedback
+            document.getElementById('scaleVal').innerText = scale + "px";
+            document.getElementById('widthVal').innerText = width + "px";
+            document.getElementById('heightVal').innerText = height + "px";
+            document.getElementById('jitterVal').innerText = jitterFactor.toFixed(2);
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Pad grid execution bounds to avoid empty edges during extreme jitter warp
+            const cols = Math.ceil(width / scale) + 3;
+            const rows = Math.ceil(height / scale) + 3;
+            
+            // Construct Coordinate Point Field
+            let gridPoints = [];
+            for (let r = 0; r < rows; r++) {
+                gridPoints[r] = [];
+                for (let c = 0; c < cols; c++) {
+                    let originX = (c - 1) * scale;
+                    let originY = (r - 1) * scale;
+                    
+                    // Displacement vectors causing hard geometric splintering
+                    let maxOffset = scale * jitterFactor * 0.5;
+                    let dispX = (Math.random() - 0.5) * maxOffset;
+                    let dispY = (Math.random() - 0.5) * maxOffset;
+                    
+                    gridPoints[r][c] = { x: originX + dispX, y: originY + dispY };
+                }
+            }
+
+            // Iterate through the coordinate matrix and stitch hard interlocking shards
+            for (let r = 0; r < rows - 1; r++) {
+                for (let c = 0; c < cols - 1; c++) {
+                    let nodeNW = gridPoints[r][c];
+                    let nodeNE = gridPoints[r][c+1];
+                    let nodeSW = gridPoints[r+1][c];
+                    let nodeSE = gridPoints[r+1][c+1];
+
+                    // Segment Alpha (Top-Left Triangle Shard)
+                    ctx.fillStyle = m90Colors[Math.floor(Math.random() * m90Colors.length)];
+                    ctx.beginPath();
+                    ctx.moveTo(nodeNW.x, nodeNW.y);
+                    ctx.lineTo(nodeNE.x, nodeNE.y);
+                    ctx.lineTo(nodeSW.x, nodeSW.y);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Segment Beta (Bottom-Right Triangle Shard)
+                    ctx.fillStyle = m90Colors[Math.floor(Math.random() * m90Colors.length)];
+                    ctx.beginPath();
+                    ctx.moveTo(nodeNE.x, nodeNE.y);
+                    ctx.lineTo(nodeSE.x, nodeSE.y);
+                    ctx.lineTo(nodeSW.x, nodeSW.y);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Real-Time Interaction Triggers
+        document.querySelectorAll('input').forEach(element => {
+            element.addEventListener('input', generateSplinterPattern);
+        });
+        document.getElementById('generateBtn').addEventListener('click', generateSplinterPattern);
+
+        // Bootstrap Initial Frame Execution
+        generateSplinterPattern();
+    </script>
+</body>
+</html>
+
