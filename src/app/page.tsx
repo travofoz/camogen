@@ -36,7 +36,7 @@ export default function Home() {
   if (polygons.length === 0) return null;
 
   return (
-    <main className="relative w-full h-screen overflow-hidden bg-black select-none">
+    <main className="relative w-full h-screen overflow-hidden bg-transparent select-none">
       <CameraOverlay />
       <CamoCanvas 
         polygons={polygons} 
